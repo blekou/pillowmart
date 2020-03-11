@@ -37,6 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'blog.apps.BlogConfig',
+    'commerce.apps.CommerceConfig',
+    'configuration.apps.ConfigurationConfig',
+    'contact.apps.ContactConfig',
+    
     'pillow.apps.PillowConfig',
 ]
 
