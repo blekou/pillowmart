@@ -8,6 +8,11 @@ from . import models
 from django.utils.safestring import mark_safe
 
 
+class ProduitInline(admin.TabularInline):
+    model = models.Produit
+    extra = 1
+
+
 class CathegorieAdmin(admin.ModelAdmin):
     list_display = ('nom', 'date_add', 'date_update',
                     'status', 'images_view')
@@ -20,6 +25,7 @@ class CathegorieAdmin(admin.ModelAdmin):
     fieldsets = [('Info Cathegorie', {'fields': ['nom', 'description', 'image']}),
                  ('Standare', {'fields': ['status']})
                  ]
+    inlines = [ProduitInline]
 
     def images_view(self, obj):
         return mark_safe('<img src="{url}" style="height:50px; width:100px">'.format(url=obj.image.url))

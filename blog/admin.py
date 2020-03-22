@@ -9,6 +9,14 @@ from . import models
 from django.utils.safestring import mark_safe
 
 
+class CommentaireInline(admin.StackedInline):
+    model = models.Commentaire
+
+
+class CathegorieArticleInline(admin.TabularInline):
+    model = models.Article
+
+
 class CathegorieArticleAdmin(admin.ModelAdmin):
     list_display = ('nom', 'date_add', 'date_update',
                     'status', 'images_view')
@@ -21,6 +29,7 @@ class CathegorieArticleAdmin(admin.ModelAdmin):
     fieldsets = [('Info Article', {'fields': ['nom', 'description', 'image']}),
                  ('Standare', {'fields': ['status']})
                  ]
+    inlines = [CathegorieArticleInline]
 
     def images_view(self, obj):
         return mark_safe('<img src="{url}" style="height:50px; width:100px">'.format(url=obj.image.url))
@@ -51,6 +60,7 @@ class ArticleAdmin(admin.ModelAdmin):
     fieldsets = [('Info Article', {'fields': ['titre', 'contenu', 'description', 'image', 'tague', 'cathegorie']}),
                  ('Standare', {'fields': ['status']})
                  ]
+    inlines = [CommentaireInline]
 
     def images_view(self, obj):
         return mark_safe('<img src="{url}" style="height:50px; width:100px">'.format(url=obj.image.url))
@@ -78,3 +88,4 @@ _register(models.CathegorieArticle, CathegorieArticleAdmin)
 _register(models.Tag, TagAdmin)
 _register(models.Article, ArticleAdmin)
 _register(models.Commentaire, CommentaireAdmin)
+CommentaireInline
