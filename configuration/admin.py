@@ -2,13 +2,12 @@ from django.contrib import admin
 
 from . import models
 
-# Register your models here.
-
-
 from django.utils.safestring import mark_safe
 
+from actions import Action
 
-class SocialAccountAdmin(admin.ModelAdmin):
+
+class SocialAccountAdmin(Action):
     list_display = ('nom', 'lien', 'date_add',
                     'date_update', 'status')
     list_filter = ('nom', )
@@ -28,7 +27,7 @@ class SocialAccountAdmin(admin.ModelAdmin):
     ]
 
 
-class SiteInfoAdmin(admin.ModelAdmin):
+class SiteInfoAdmin(Action):
     list_display = ('logo_view', 'email', 'date_add',
                     'date_update', 'status')
     list_filter = ('email', )
@@ -45,7 +44,7 @@ class SiteInfoAdmin(admin.ModelAdmin):
         return mark_safe('<img src="{url}" style="height:50px; width:100px">'.format(url=obj.logo.url))
 
 
-class PresentationAdmin(admin.ModelAdmin):
+class PresentationAdmin(Action):
     list_display = ('images_view', 'nom', 'date_add',
                     'date_update', 'status')
     list_filter = ('nom', )
@@ -62,7 +61,7 @@ class PresentationAdmin(admin.ModelAdmin):
         return mark_safe('<img src="{url}" style="height:50px; width:100px">'.format(url=obj.image.url))
 
 
-class TemoignageAdmin(admin.ModelAdmin):
+class TemoignageAdmin(Action):
     list_display = ('images_view', 'nom', 'prenom', 'date_add',
                     'date_update', 'status')
     list_filter = ('nom', )

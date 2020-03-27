@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 
+
 class CathegorieArticle(models.Model):
     nom = models.CharField(max_length=255)
     description = models.TextField()
@@ -41,8 +42,8 @@ class Article(models.Model):
     contenu = models.TextField()
     image = models.ImageField(upload_to="images/Article")
     tague = models.ManyToManyField(Tag, related_name='tag_Article')
-    cathegorie = models.ForeignKey(CathegorieArticle, on_delete=models.CASCADE, related_name='cathegorie_Article')
-
+    cathegorie = models.ForeignKey(
+        CathegorieArticle, on_delete=models.CASCADE, related_name='cathegorie_Article')
 
     date_add = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
@@ -57,11 +58,11 @@ class Article(models.Model):
 
 
 class Commentaire(models.Model):
-    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='commentaire_article')
+    article = models.ForeignKey(
+        Article, on_delete=models.CASCADE, related_name='commentaire_article')
     nom = models.CharField(max_length=255)
     prenom = models.CharField(max_length=255)
     commentaire = models.TextField()
-
 
     date_add = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
@@ -72,4 +73,4 @@ class Commentaire(models.Model):
         verbose_name_plural = 'Commentaires'
 
     def __str__(self):
-        return self.nom + self.article
+        return self.nom

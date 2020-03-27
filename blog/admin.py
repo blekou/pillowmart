@@ -2,11 +2,10 @@ from django.contrib import admin
 
 from . import models
 
-# Register your models here.
-
-
 # Ajouter du HTML pour obtenir un rendu de l'image
 from django.utils.safestring import mark_safe
+
+from actions import Action
 
 
 class CommentaireInline(admin.StackedInline):
@@ -17,7 +16,7 @@ class CathegorieArticleInline(admin.TabularInline):
     model = models.Article
 
 
-class CathegorieArticleAdmin(admin.ModelAdmin):
+class CathegorieArticleAdmin(Action):
     list_display = ('nom', 'date_add', 'date_update',
                     'status', 'images_view')
     list_filter = ('status', )
@@ -35,7 +34,7 @@ class CathegorieArticleAdmin(admin.ModelAdmin):
         return mark_safe('<img src="{url}" style="height:50px; width:100px">'.format(url=obj.image.url))
 
 
-class TagAdmin(admin.ModelAdmin):
+class TagAdmin(Action):
     list_display = ('nom', 'date_add', 'date_update', 'status')
     list_filter = ('nom', )
     search_fields = ('nom', )
@@ -48,7 +47,7 @@ class TagAdmin(admin.ModelAdmin):
                  ]
 
 
-class ArticleAdmin(admin.ModelAdmin):
+class ArticleAdmin(Action):
     list_display = ('titre', 'date_add', 'date_update',
                     'status', 'images_view')
     list_filter = ('status', )
@@ -66,7 +65,7 @@ class ArticleAdmin(admin.ModelAdmin):
         return mark_safe('<img src="{url}" style="height:50px; width:100px">'.format(url=obj.image.url))
 
 
-class CommentaireAdmin(admin.ModelAdmin):
+class CommentaireAdmin(Action):
     list_display = ('nom', 'prenom', 'article', 'date_add',
                     'date_update', 'status')
     list_filter = ('nom', )

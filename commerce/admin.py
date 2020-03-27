@@ -2,10 +2,9 @@ from django.contrib import admin
 
 from . import models
 
-# Register your models here.
-
-
 from django.utils.safestring import mark_safe
+
+from actions import Action
 
 
 class ProduitInline(admin.TabularInline):
@@ -13,7 +12,7 @@ class ProduitInline(admin.TabularInline):
     extra = 1
 
 
-class CathegorieAdmin(admin.ModelAdmin):
+class CathegorieAdmin(Action):
     list_display = ('nom', 'date_add', 'date_update',
                     'status', 'images_view')
     list_filter = ('status', )
@@ -31,7 +30,7 @@ class CathegorieAdmin(admin.ModelAdmin):
         return mark_safe('<img src="{url}" style="height:50px; width:100px">'.format(url=obj.image.url))
 
 
-class ProduitAdmin(admin.ModelAdmin):
+class ProduitAdmin(Action):
     list_display = ('nom', 'prix', 'cathegorie', 'date_add', 'date_update',
                     'status', 'images_view')
     list_filter = ('status', )

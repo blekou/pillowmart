@@ -2,13 +2,12 @@ from django.contrib import admin
 
 from . import models
 
-# Register your models here.
-
-
 from django.utils.safestring import mark_safe
 
+from actions import Action
 
-class ContactAdmin(admin.ModelAdmin):
+
+class ContactAdmin(Action):
     list_display = ('nom', 'email', 'sujet',
                     'date_add', 'date_update', 'status')
     list_filter = ('nom', )
@@ -22,7 +21,7 @@ class ContactAdmin(admin.ModelAdmin):
                  ]
 
 
-class NewsLetterAdmin(admin.ModelAdmin):
+class NewsLetterAdmin(Action):
     list_display = ('id', 'email', 'date_add', 'date_update', 'status')
     list_filter = ('id', )
     search_fields = ('email', )
