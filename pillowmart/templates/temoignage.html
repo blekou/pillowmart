@@ -1,0 +1,19 @@
+<section class="client_review">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="client_review_slider owl-carousel">
+            {% for temoin in temoignage %}
+                <div class="single_client_review">
+                  <div class="client_img">
+                    <img src="{{ temoin.photo.url }}" alt="#" />
+                  </div>
+                  <p>{{ temoin.message }}</p>
+                  <h5>- {{ temoin.nom }} {{ temoin.prenom }}</h5>
+                </div>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
