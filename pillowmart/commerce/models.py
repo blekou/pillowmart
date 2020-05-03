@@ -1,6 +1,8 @@
 from django.db import models
 
 # Create your models here.
+from configuration.models import UserAccount
+
 
 
 class Cathegorie(models.Model):
@@ -40,8 +42,9 @@ class Produit(models.Model):
 
 
 class Panier(models.Model):
-    quantite = models.PositiveSmallIntegerField()
+    user = models.ForeignKey(UserAccount, related_name='user_panier', on_delete=models.CASCADE, null=True)
     produit = models.ForeignKey(Produit, on_delete=models.CASCADE, related_name='produit_panier')
+    quantite = models.PositiveSmallIntegerField()
 
     date_add = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
@@ -52,4 +55,4 @@ class Panier(models.Model):
         verbose_name_plural = 'Entrepot'
 
     def __str__(self):
-        return self.nom
+        return str(self.user)

@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
-from configuration.models import SiteInfo, SocialAccount, Temoignage, Presentation
-from commerce.models import Cathegorie, Produit
-from blog.models import Article, CathegorieArticle, Commentaire, Tag
+from configuration.models import SiteInfo, SocialAccount, Temoignage, Presentation, UserAccount, OtherInfo
+from commerce.models import Cathegorie, Produit, Panier
+from blog.models import Article, CathegorieArticle, Commentaire, Tag, InstagramFeed
 from contact.models import Contact, NewsLetter
 from formulaire import ContactForm, LoginForm, RegisterForm
 
@@ -41,11 +42,13 @@ def about(request):
         if email:
             news_letter = NewsLetter.objects.create(email=email)
             news_letter.save()
+    autresInfo = OtherInfo.objects.filter(status=True)[0]
     temoignage = Temoignage.objects.filter(status=True)
     info_site = SiteInfo.objects.filter(status=True)[0]
     social_account = SocialAccount.objects.filter(status=True)
     presentation = Presentation.objects.filter(status=True)[0]
     datas = {
+        'autresInfo': autresInfo,
         'info_site': info_site,
         'presentation': presentation,
         'temoignage': temoignage,
@@ -79,12 +82,14 @@ def blog(request, filtre=None, id=None):
         articles_page = _paginator.page(_paginator.num_pages)
 
     tags = Tag.objects.filter(status=True)
+    instagramfeed = InstagramFeed.objects.filter(status=True).order_by('-date_update')
     cathegories = CathegorieArticle.objects.filter(status=True)
     info_site = SiteInfo.objects.filter(status=True)[0]
     social_account = SocialAccount.objects.filter(status=True)
     presentation = Presentation.objects.filter(status=True)[0]
 
     datas = {
+        'instagramfeeds':instagramfeed,
         'articles': articles_page,
         'tags': tags,
         'cathegories': cathegories,
@@ -96,16 +101,25 @@ def blog(request, filtre=None, id=None):
     return render(request, "blog.html", datas)
 
 
+@login_required(login_url='login')
 def cart(request):
     if request.method == 'POST':
         email = request.POST['newsletter']
         if email:
             news_letter = NewsLetter.objects.create(email=email)
             news_letter.save()
+    user = UserAccount.objects.get(user=request.user)
+    entrepot = Panier.objects.filter(user=user, status=True)
     info_site = SiteInfo.objects.filter(status=True)[0]
     social_account = SocialAccount.objects.filter(status=True)
     presentation = Presentation.objects.filter(status=True)[0]
+
+    _subtotal = [p.produit.prix*p.quantite for p in entrepot]
+    subtotal = sum(_subtotal) if _subtotal else 0
+
     datas = {
+        'subtotal': subtotal,
+        'entrepot': entrepot,
         'info_site': info_site,
         'presentation': presentation,
         'social_account': social_account,
@@ -153,33 +167,18 @@ def contact(request):
         if contact_form.is_valid():
             contact_form.save()
             contact_form = ContactForm()
+    autresInfo = OtherInfo.objects.filter(status=True)[0]
     info_site = SiteInfo.objects.filter(status=True)[0]
     social_account = SocialAccount.objects.filter(status=True)
     presentation = Presentation.objects.filter(status=True)[0]
     datas = {
+        'autresInfo': autresInfo,
         'contact_form': contact_form,
         'info_site': info_site,
         'presentation': presentation,
         'social_account': social_account,
     }
     return render(request, "contact.html", datas)
-
-
-def elements(request):
-    if request.method == 'POST':
-        email = request.POST['newsletter']
-        if email:
-            news_letter = NewsLetter.objects.create(email=email)
-            news_letter.save()
-    info_site = SiteInfo.objects.filter(status=True)[0]
-    social_account = SocialAccount.objects.filter(status=True)
-    presentation = Presentation.objects.filter(status=True)[0]
-    datas = {
-        'info_site': info_site,
-        'presentation': presentation,
-        'social_account': social_account,
-    }
-    return render(request, "elements.html", datas)
 
 
 def register(request):
@@ -189,8 +188,9 @@ def register(request):
             form.save()
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
-            # print('\n\n\n***\n', username, password, '\n*\n\n\n')
+            avatar = form.cleaned_data.get('avatar')
             user = authenticate(username=username, password=password)
+            UserAccount.objects.create(user=user, avatar=avatar)
             return redirect('login')
     else:
         form = RegisterForm()
@@ -257,13 +257,15 @@ def product_list(request, limit=6, search=None, filtre=None, idt=None):
         except EmptyPage: # Si la page est vide
             produits_page = _paginator.page(_paginator.num_pages)
 
-    cathegories = Cathegorie.objects.filter(status=True).order_by('-date_update')
+    cathegories = Cathegorie.objects.filter(status=True)
+    autresInfo = OtherInfo.objects.filter(status=True)[0]
     temoignage = Temoignage.objects.filter(status=True)
     info_site = SiteInfo.objects.filter(status=True)[0]
     social_account = SocialAccount.objects.filter(status=True)
     presentation = Presentation.objects.filter(status=True)[0]
     datas = {
-        'cathegories': cathegories,
+        'cathegories': cathegories.order_by('-date_update'),
+        'autresInfo': autresInfo,
         'temoignage': temoignage,
         'info_site': info_site,
         'presentation': presentation,
@@ -283,27 +285,34 @@ def single_blog(request, id):
             if request.user.is_authenticated:
                 commentaire = request.POST['comment']
                 if commentaire:
-                    user = request.user
-                    poster_ommentaire = Commentaire.objects.create(
-                        article=_article,
-                        user=user,
-                        commentaire=commentaire
-                        )
-                    poster_ommentaire.save()
+                    user = UserAccount.objects.get(status=True, user=request.user)
+                    if user:
+                        poster_ommentaire = Commentaire.objects.create(
+                            article=_article,
+                            user=user,
+                            commentaire=commentaire
+                            )
+                        poster_ommentaire.save()
             else:
                 return redirect('login')
         else:
             if email:
                 news_letter = NewsLetter.objects.create(email=email)
                 news_letter.save()
+    instagramfeed = InstagramFeed.objects.filter(status=True)
+    autresInfo = OtherInfo.objects.filter(status=True)[0]
     tags = Tag.objects.filter(status=True)
     articles = Article.objects.filter(status=True)
+    comment = Commentaire.objects.filter(status=True, article=_article)
     cathegories = CathegorieArticle.objects.filter(status=True)
     info_site = SiteInfo.objects.filter(status=True)[0]
     social_account = SocialAccount.objects.filter(status=True)
     presentation = Presentation.objects.filter(status=True)[0]
     datas = {
-        'article':_article,
+        'autresInfo': autresInfo,
+        'instagramfeeds': instagramfeed.order_by('-date_update'),
+        'commentaires': comment,
+        'article': _article,
         'tags': tags,
         'cathegories': cathegories,
         'recent_articles': articles.order_by('-date_update')[:4],
@@ -314,17 +323,40 @@ def single_blog(request, id):
     return render(request, "single-blog.html", datas)
 
 
-def single_product(request, id=None):
-    if request.method == 'POST':
-        email = request.POST['newsletter']
-        if email:
-            news_letter = NewsLetter.objects.create(email=email)
-            news_letter.save()
+def single_product(request, act=None, id=None):
     produit = get_object_or_404(Produit, status=True, id=id)
+
+    if request.method == 'POST':
+        try:
+            email = request.POST['newsletter']
+        except:
+            if request.user.is_authenticated:
+                nombre = request.POST['quantite']
+                user = UserAccount.objects.get(user=request.user)
+                if nombre.isdigit() and user:
+                    panier = Panier.objects.create(quantite=int(nombre), produit=produit, user=user)
+                    panier.save()
+                    return redirect('cart')
+        else:
+            if email:
+                news_letter = NewsLetter.objects.create(email=email)
+                news_letter.save()
+    if act == 'rm':
+        if request.user.is_authenticated:
+            user = UserAccount.objects.get(user=request.user)
+            panier = Panier.objects.get(status=True, produit_id=id, user=user)
+            panier.delete()
+
+    try:
+        deja_dans_le_panier = Panier.objects.get(produit=produit, status=True)
+    except:
+        deja_dans_le_panier = None
+
     info_site = SiteInfo.objects.filter(status=True)[0]
     social_account = SocialAccount.objects.filter(status=True)
     presentation = Presentation.objects.filter(status=True)[0]
     datas = {
+        'deja_dans_le_panier':deja_dans_le_panier,
         'produit': produit,
         'info_site': info_site,
         'presentation': presentation,

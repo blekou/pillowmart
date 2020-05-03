@@ -1,7 +1,7 @@
 from django import forms
 from contact.models import Contact
 from django.contrib.auth.forms import UserCreationForm
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 from configuration.models import UserAccount
 
 
@@ -27,7 +27,7 @@ class LoginForm(forms.Form):
 
 
 
-class RegisterForm(forms.ModelForm):
+class RegisterForm(UserCreationForm):
     '''
         Formulaire d'inscription
     '''
@@ -76,7 +76,7 @@ class RegisterForm(forms.ModelForm):
     ))
 
     class Meta:
-        model = UserAccount
+        model = User
         fields = ('last_name', 'first_name', 'username', 'email', 'avatar', 'password1', 'password2')
 
 

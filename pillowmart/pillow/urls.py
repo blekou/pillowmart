@@ -12,7 +12,6 @@ urlpatterns = [
     path('checkout', views.checkout, name="checkout"),
     path('confirmation', views.confirmation, name="confirmation"),
     path('contact', views.contact, name="contact"),
-    path('elements', views.elements, name="elements"),
     path('register', views.register, name="register"),
     path('login', views.login_page, name="login"),
     path('logout', views.logout_page, name="logout"),
@@ -21,4 +20,5 @@ urlpatterns = [
     path('product_list/<str:filtre>/<int:idt>', views.product_list, name="product_list"),
     path('single-blog/<int:id>', views.single_blog, name="single-blog"),
     path('single-product/<int:id>', views.single_product, name="single-product"),
+    path('single-product/<str:act>/<int:id>', views.single_product, name="single-product"),
 ]

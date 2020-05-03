@@ -26,11 +26,16 @@
             <h2>{{ article.titre }}</h2>
             <ul class="blog-info-link mt-3 mb-4">
               <li>
-                <a href="#"><i class="far fa-user"></i> Travel, Lifestyle</a>
+                <a href="{% url 'blog' 'cath' article.cathegorie_id %}"><i class="far fa-user"></i>{{ article.cathegorie }}</a>
               </li>
+              {% if commentaires %}
               <li>
-                <a href="#"><i class="far fa-comments"></i> 03 Comments</a>
+                <a href="#com">
+                    <i class="far fa-comments"></i>
+                    {{ commentaires|length }} Comment{{ commentaires|pluralize }}
+                </a>
               </li>
+              {% endif %}
             </ul>
               {{ article.description|linebreaks }}
             {% comment %} <div class="quote-wrapper">
@@ -48,9 +53,9 @@
               </span>
               Lily and 4 people like this
             </p> {% endcomment %}
-            <div class="col-sm-4 text-center my-2 my-sm-0">
+            {% comment %} <div class="col-sm-4 text-center my-2 my-sm-0">
               <p class="comment-count"><span class="align-middle"><i class="far fa-comment"></i></span> 06 Comments</p>
-            </div>
+            </div> {% endcomment %}
             <ul class="social-icons">
                 {% for account in social_account %}
                 <li>
@@ -115,54 +120,51 @@
 
         <div class="blog-author">
           <div class="media align-items-center">
-            <img src="{{ article.auteur.avatare.url }}" alt="" />
+            <img src="{{ article.auteur.avatar.url }}"/>
             <div class="media-body">
               <a>
-                <h4>{{ article.auteur.last_name }} {{ article.auteur.first_name }}</h4>
+                <h4>{{ article.auteur.user.last_name }} {{ article.auteur.user.first_name }}</h4>
               </a>
-              <p>
-                Second divided from form fish beast made. Every of seas all
-                gathered use saying you're, he our dominion twon Second divided
-                from
-              </p>
+              <p>{{ autresInfo.admin_message }}</p>
             </div>
           </div>
         </div>
 
-        <div class="comments-area">
-          <h4>06 Comments</h4>
+        <div class="comments-area" id="com">
+            {% if commentaires %}
+            {% else %}
+                <h4>Aucun commentaire</h4>
+            {% endif %}
+          <h4>{{ commentaires|length }} Comment{{ commentaires|pluralize }}</h4>
 
           <div class="comment-list">
             <div class="single-comment justify-content-between d-flex">
-              <div class="user justify-content-between d-flex">
-                <div class="thumb">
-                  <img src="/static/img/comment/comment_1.png" alt="" />
-                </div>
-                <div class="desc">
-                  <p class="comment">
-                    Multiply sea night grass fourth day sea lesser rule open
-                    subdue female fill which them Blessed, give fill lesser
-                    bearing multiply sea night grass fourth day sea lesser
-                  </p>
-                  <div class="d-flex justify-content-between">
-                    <div class="d-flex align-items-center">
-                      <h5>
-                        <a>Emilly Blunt</a>
-                      </h5>
-                      <p class="date">December 4, 2017 at 3:12 pm</p>
+                {% for commentaire in commentaires %}
+                <div class="user justify-content-between d-flex">
+                  <div class="thumb">
+                    <img src="{{ commentaire.user.avatar.url }}" alt="" />
+                  </div>
+                  <div class="desc">
+                    <p class="comment">{{ commentaire.commentaire }}</p>
+                    <div class="d-flex justify-content-between">
+                      <div class="d-flex align-items-center">
+                        <h5>
+                          <a>{{ commentaire.user.user.last_name }} {{ commentaire.user.user.first_name }}</a>
+                        </h5>
+                        <p class="date">{{ commentaire.date_update|date:'d. M, Y a (H:i:s)' }}</p>
+                      </div>
+                      {% comment %} <div class="reply-btn">
+                        <a href="#" class="btn-reply text-uppercase">reply</a>
+                      </div> {% endcomment %}
                     </div>
-                    {% comment %} <div class="reply-btn">
-                      <a href="#" class="btn-reply text-uppercase">reply</a>
-                    </div> {% endcomment %}
                   </div>
                 </div>
-              </div>
+                {% endfor %}
             </div>
           </div>
 
-
-
         </div>
+
         <div class="comment-form">
           <h4>Leave a Reply</h4>
           <form class="form-contact comment_form" id="commentForm" method="POST">

@@ -1,6 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
-
+# from django.contrib.auth.models import User
+from configuration.models import UserAccount
 # Create your models here.
 
 class CathegorieArticle(models.Model):
@@ -59,8 +59,7 @@ class Article(models.Model):
     cathegorie = models.ForeignKey(
         CathegorieArticle, on_delete=models.CASCADE, related_name='cathegorie_Article')
 
-    auteur = models.ForeignKey(User, related_name='auteur_article', on_delete=models.SET_NULL, blank=True, null=True)
-
+    auteur = models.ForeignKey(UserAccount, related_name='auteur_article', on_delete=models.CASCADE, null=True)
 
     date_add = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
@@ -77,7 +76,7 @@ class Article(models.Model):
 class Commentaire(models.Model):
     article = models.ForeignKey(
         Article, on_delete=models.CASCADE, related_name='commentaire_article')
-    user = models.ForeignKey(User, related_name='comment_user', on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(UserAccount, related_name='comment_user', on_delete=models.CASCADE, null=True)
     commentaire = models.TextField()
     # nom = models.CharField(max_length=255)
     # prenom = models.CharField(max_length=255)

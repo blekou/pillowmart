@@ -81,7 +81,6 @@ class TemoignageAdmin(Action):
         return mark_safe('<img src="{url}" style="height:50px; width:100px">'.format(url=obj.photo.url))
 
 
-
 class UserAccountInline(admin.StackedInline):
     model = models.UserAccount
     can_delete = False
@@ -93,7 +92,6 @@ class UserAdmin(BaseUserAdmin):
 
 def _register(model, admin_class):
     admin.site.register(model, admin_class)
-
 
 
 admin.site.unregister(User)

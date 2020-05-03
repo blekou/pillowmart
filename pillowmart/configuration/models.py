@@ -92,9 +92,11 @@ class UserAccount(models.Model):
     status = models.BooleanField(default=True)
 
     class Meta():
-        verbose_name = 'Utilisateur'
-        verbose_name_plural = 'Utilisateurs'
+        verbose_name = 'UserAccount'
+        verbose_name_plural = 'UserAccounts'
 
+    def __str__(self):
+        return str(self.user)
 
 
 class OtherInfo(models.Model):
@@ -114,4 +116,4 @@ class OtherInfo(models.Model):
         verbose_name_plural = 'Autres'
 
     def __str__(self):
-        return self.nom
+        return str(self.addresse)

@@ -45,21 +45,38 @@
           </h3>
           <p>{{ produit.description }}</p>
           <div class="card_area">
-            <div class="product_count_area">
-              <p>Quantity</p>
-              <div class="product_count d-inline-block">
-                <span class="product_count_item inumber-decrement total_quantite">
-                  <i class="ti-minus"></i></span>
-                <input class="product_count_item input-number"
-                  type="text" value="1" min="0" max="10" id="total_quantite"/>
-                <span class="product_count_item number-increment total_quantite">
-                  <i class="ti-plus"></i></span>
-              </div>
-              <p id="total_prix">${{ produit.prix }}</p>
-            </div>
-            <div class="add_to_cart">
-              <a href="#" class="btn_3">add to cart</a>
-            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="product_count_area">
+                  <p>Quantity</p>
+                  <div class="product_count d-inline-block">
+                    <span class="product_count_item inumber-decrement total_quantite">
+                      <i class="ti-minus"></i></span>
+                    <input class="product_count_item input-number"
+                      type="text" name='quantite' value="1" min="0" max="10" id="total_quantite"/>
+                    <span class="product_count_item number-increment total_quantite">
+                      <i class="ti-plus"></i></span>
+                  </div>
+                  <p id="total_prix">${{ produit.prix }}</p>
+                </div>
+
+                {% if request.user.is_authenticated %}
+                    {% if deja_dans_le_panier %}
+                        <div class="add_to_cart">
+                            <a style="color:red" href="{% url 'single-product' 'rm' produit.id %}" class="btn_3">remove to cart</a>
+                        </div>
+                    {% else %}
+                        <div class="add_to_cart">
+                            <button type="submit" class="btn_3">add to cart</button>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="add_to_cart">
+                      <a href="{% url 'login' %}" class="btn_3">Connectez vous pour l'ajouter au panier</a>
+                    </div>
+                {% endif %}
+
+            </form>
           </div>
         </div>
       </div>
