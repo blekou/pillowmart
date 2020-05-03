@@ -10,10 +10,12 @@ from actions import Action
 
 class CommentaireInline(admin.StackedInline):
     model = models.Commentaire
+    extra = 1
 
 
 class CathegorieArticleInline(admin.TabularInline):
     model = models.Article
+    extra = 1
 
 
 class CathegorieArticleAdmin(Action):
@@ -25,7 +27,7 @@ class CathegorieArticleAdmin(Action):
     list_display_links = ['nom']
     ordering = ['nom']
     list_per_page = 10
-    fieldsets = [('Info Article', {'fields': ['nom', 'description', 'image']}),
+    fieldsets = [('Info Cathegorie', {'fields': ['nom', 'description', 'image']}),
                  ('Standare', {'fields': ['status']})
                  ]
     inlines = [CathegorieArticleInline]
@@ -57,7 +59,8 @@ class ArticleAdmin(Action):
     ordering = ['titre']
     list_per_page = 10
     fieldsets = [('Info Article', {'fields': ['titre', 'contenu', 'description', 'image', 'tague', 'cathegorie']}),
-                 ('Standare', {'fields': ['status']})
+                 ('Info Auteur', {'fields': ['auteur']}),
+                 ('Standare', {'fields': ['status']}),
                  ]
     inlines = [CommentaireInline]
 
@@ -65,26 +68,55 @@ class ArticleAdmin(Action):
         return mark_safe('<img src="{url}" style="height:50px; width:100px">'.format(url=obj.image.url))
 
 
+class InstagramFeedAdmin(Action):
+    list_display = ('images_view', 'date_add', 'date_update', 'status')
+    list_filter = ('status', )
+    date_hierarchy = 'date_add'
+    list_display_links = ['date_add', 'date_update']
+    ordering = ['date_update']
+    list_per_page = 14
+    fieldsets = [('Image', {'fields': ['image', ]}),
+                 ('Standare', {'fields': ['status']})
+                 ]
+
+    def images_view(self, obj):
+        return mark_safe('<img src="{url}" style="height:100px; width:100px">'.format(url=obj.image.url))
+
+
+
+# class CommentaireAdmin(Action):
+#     list_display = ('nom', 'prenom', 'article', 'date_add',
+#                     'date_update', 'status')
+#     list_filter = ('nom', )
+#     search_fields = ('article', )
+#     date_hierarchy = 'date_add'
+#     list_display_links = ['article']
+#     ordering = ['article']
+#     list_per_page = 10
+#     fieldsets = [('Info Commentaire', {'fields': ['article', 'nom', 'commentaire']}),
+#                  ('Standare', {'fields': ['status']})
+#                  ]
+
+
 class CommentaireAdmin(Action):
-    list_display = ('nom', 'prenom', 'article', 'date_add',
+    list_display = ('user', 'article', 'date_add',
                     'date_update', 'status')
-    list_filter = ('nom', )
-    search_fields = ('article', )
+    list_filter = ('status', 'user', 'article')
+    search_fields = ('article', 'user')
     date_hierarchy = 'date_add'
     list_display_links = ['article']
     ordering = ['article']
     list_per_page = 10
-    fieldsets = [('Info Commentaire', {'fields': ['article', 'nom', 'commentaire']}),
+    fieldsets = [('Info Commentaire', {'fields': ['article', 'user', 'commentaire']}),
                  ('Standare', {'fields': ['status']})
                  ]
-
 
 def _register(model, admin_class):
     admin.site.register(model, admin_class)
 
 
-_register(models.CathegorieArticle, CathegorieArticleAdmin)
 _register(models.Tag, TagAdmin)
+_register(models.InstagramFeed , InstagramFeedAdmin)
 _register(models.Article, ArticleAdmin)
 _register(models.Commentaire, CommentaireAdmin)
-CommentaireInline
+_register(models.CathegorieArticle, CathegorieArticleAdmin)

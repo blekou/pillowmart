@@ -38,3 +38,18 @@ class Produit(models.Model):
     def __str__(self):
         return self.nom
 
+
+class Panier(models.Model):
+    quantite = models.PositiveSmallIntegerField()
+    produit = models.ForeignKey(Produit, on_delete=models.CASCADE, related_name='produit_panier')
+
+    date_add = models.DateTimeField(auto_now_add=True)
+    date_update = models.DateTimeField(auto_now=True)
+    status = models.BooleanField(default=True)
+
+    class Meta():
+        verbose_name = 'Panier'
+        verbose_name_plural = 'Entrepot'
+
+    def __str__(self):
+        return self.nom

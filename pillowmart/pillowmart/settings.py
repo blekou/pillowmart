@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'commerce.apps.CommerceConfig',
     'configuration.apps.ConfigurationConfig',
     'contact.apps.ContactConfig',
-    
+
     'pillow.apps.PillowConfig',
 ]
 

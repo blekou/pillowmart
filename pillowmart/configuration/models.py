@@ -1,6 +1,7 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
+
 
 class SocialAccount(models.Model):
     ICONS = [
@@ -64,7 +65,6 @@ class Presentation(models.Model):
 
 
 
-
 class Temoignage(models.Model):
     photo = models.ImageField(upload_to="images/Temoignage")
     nom = models.CharField(max_length=255)
@@ -78,6 +78,40 @@ class Temoignage(models.Model):
     class Meta():
         verbose_name = 'Temoignage'
         verbose_name_plural = 'Temoignages'
+
+    def __str__(self):
+        return self.nom
+
+
+class UserAccount(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to="images/User", default='images/avatar.png', blank=True)
+
+    date_add = models.DateTimeField(auto_now_add=True)
+    date_update = models.DateTimeField(auto_now=True)
+    status = models.BooleanField(default=True)
+
+    class Meta():
+        verbose_name = 'Utilisateur'
+        verbose_name_plural = 'Utilisateurs'
+
+
+
+class OtherInfo(models.Model):
+    addresse = models.CharField(max_length=255)
+    commune = models.CharField(max_length=255)
+    contact = models.CharField(max_length=255)
+    code_postal = models.CharField(max_length=255)
+    innovate_message = models.TextField()
+    admin_message = models.TextField()
+
+    date_add = models.DateTimeField(auto_now_add=True)
+    date_update = models.DateTimeField(auto_now=True)
+    status = models.BooleanField(default=True)
+
+    class Meta():
+        verbose_name = 'Autre'
+        verbose_name_plural = 'Autres'
 
     def __str__(self):
         return self.nom

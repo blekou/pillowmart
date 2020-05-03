@@ -1,7 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
-
 
 class CathegorieArticle(models.Model):
     nom = models.CharField(max_length=255)
@@ -35,6 +35,20 @@ class Tag(models.Model):
     def __str__(self):
         return self.nom
 
+class InstagramFeed(models.Model):
+    image = models.ImageField(upload_to="images/InstagramFeed")
+
+    date_add = models.DateTimeField(auto_now_add=True)
+    date_update = models.DateTimeField(auto_now=True)
+    status = models.BooleanField(default=True)
+
+    class Meta():
+        verbose_name = 'Instagram Feed'
+        verbose_name_plural = 'Instagram Feeds'
+
+    def __str__(self):
+        return str(self.image)
+
 
 class Article(models.Model):
     titre = models.CharField(max_length=255)
@@ -44,6 +58,9 @@ class Article(models.Model):
     tague = models.ManyToManyField(Tag, related_name='tag_Article')
     cathegorie = models.ForeignKey(
         CathegorieArticle, on_delete=models.CASCADE, related_name='cathegorie_Article')
+
+    auteur = models.ForeignKey(User, related_name='auteur_article', on_delete=models.SET_NULL, blank=True, null=True)
+
 
     date_add = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
@@ -60,9 +77,10 @@ class Article(models.Model):
 class Commentaire(models.Model):
     article = models.ForeignKey(
         Article, on_delete=models.CASCADE, related_name='commentaire_article')
-    nom = models.CharField(max_length=255)
-    prenom = models.CharField(max_length=255)
+    user = models.ForeignKey(User, related_name='comment_user', on_delete=models.CASCADE, null=True)
     commentaire = models.TextField()
+    # nom = models.CharField(max_length=255)
+    # prenom = models.CharField(max_length=255)
 
     date_add = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
@@ -73,4 +91,4 @@ class Commentaire(models.Model):
         verbose_name_plural = 'Commentaires'
 
     def __str__(self):
-        return self.nom
+        return str(self.user)

@@ -6,6 +6,9 @@ from django.utils.safestring import mark_safe
 
 from actions import Action
 
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
+
 
 class SocialAccountAdmin(Action):
     list_display = ('nom', 'lien', 'date_add',
@@ -78,11 +81,25 @@ class TemoignageAdmin(Action):
         return mark_safe('<img src="{url}" style="height:50px; width:100px">'.format(url=obj.photo.url))
 
 
+
+class UserAccountInline(admin.StackedInline):
+    model = models.UserAccount
+    can_delete = False
+
+
+class UserAdmin(BaseUserAdmin):
+    inlines = [UserAccountInline]
+
+
 def _register(model, admin_class):
     admin.site.register(model, admin_class)
 
 
+
+admin.site.unregister(User)
 _register(models.SocialAccount, SocialAccountAdmin)
 _register(models.Presentation, PresentationAdmin)
 _register(models.SiteInfo, SiteInfoAdmin)
 _register(models.Temoignage, TemoignageAdmin)
+_register(User, UserAdmin)
+admin.site.register(models.OtherInfo)
