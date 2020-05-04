@@ -5,7 +5,7 @@ from . import models
 # Ajouter du HTML pour obtenir un rendu de l'image
 from django.utils.safestring import mark_safe
 
-from actions import Action
+from actions.action import Action
 
 
 class CommentaireInline(admin.StackedInline):

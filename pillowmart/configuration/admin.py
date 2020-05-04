@@ -4,7 +4,7 @@ from . import models
 
 from django.utils.safestring import mark_safe
 
-from actions import Action
+from actions.action import Action
 
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User

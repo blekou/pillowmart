@@ -1,0 +1,156 @@
+{% extends '../base/base.html' %}
+
+{% block content %}
+<!-- banner part start-->
+<section class="banner_part">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-5">
+        <div class="banner_text">
+          <div class="banner_text_iner">
+            <h1>{{ product_quality_last.nom }}</h1>
+            <p>{{ product_quality_last.description }}</p>
+            <a href="{% url 'product_list' %}" class="btn_1">shop now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="banner_img">
+    <img src="{{ product_quality_last.image.url }}" alt="#" class="img-fluid" />
+    <img src="/static/img/banner_pattern.png" class="pattern_img img-fluid" />
+  </div>
+</section>
+<!-- banner part start-->
+
+
+<!-- product list start-->
+<section class="single_product_list">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        {% for quality in product_quality %}
+
+        <div class="single_product_iner">
+          <div class="row align-items-center justify-content-between">
+            <div class="col-lg-6 col-sm-6">
+              <div class="single_product_img">
+                <img src="{{ quality.image.url }}" class="img-fluid"/>
+                <img
+                  src="/static/img/product_overlay.png"
+                  class="product_overlay img-fluid"/>
+              </div>
+            </div>
+            <div class="col-lg-5 col-sm-6">
+              <div class="single_product_content">
+                <h5>Started from ${{ quality.prix }}</h5>
+                <h2>
+                  <a href="{% url 'single-product' quality.id %}">{{ quality.nom }}</a>
+                </h2>
+                <a href="{% url 'product_list' %}" class="btn_3">Explore Now</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+<!-- product list end-->
+
+
+{% if product_trending %}
+<!-- trending item start-->
+<section class="trending_items">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="section_tittle text-center">
+          <h2>Trending Items</h2>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+        {% for trending in product_trending %}
+            <div class="col-lg-4 col-sm-6">
+                <div class="single_product_item">
+                  <div class="single_product_item_thumb">
+                    <img
+                      src="{{ trending.image.url }}"
+                      class="img-fluid"/>
+                  </div>
+                  <h3>
+                    <a href="{% url 'single-product' trending.id %}">{{ trending.nom }}</a>
+                  </h3>
+                  <p>From ${{ trending.prix }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+  </div>
+</section>
+<!-- trending item end-->
+{% endif %}
+
+
+<!-- client review part here -->
+    {% include "pages/temoignage.html" %}
+<!-- client review part end -->
+
+
+<!-- feature part here -->
+<section class="feature_part section_padding">
+  <div class="container">
+    <div class="row justify-content-between">
+      <div class="col-lg-6">
+        <div class="feature_part_tittle">
+          <h3>
+            Credibly innovate granular internal or organic sources whereas
+            standards.
+          </h3>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="feature_part_content">
+          <p>
+            Seamlessly empower fully researched growth strategies and
+            interoperable internal or “organic” sources. Credibly innovate
+            granular internal or “organic” sources whereas high standards in
+            web-readiness.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-3 col-sm-6">
+        <div class="single_feature_part">
+          <img src="/static/img/icon/feature_icon_1.svg" alt="#" />
+          <h4>Credit Card Support</h4>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <div class="single_feature_part">
+          <img src="/static/img/icon/feature_icon_2.svg" alt="#" />
+          <h4>Online Order</h4>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <div class="single_feature_part">
+          <img src="/static/img/icon/feature_icon_3.svg" alt="#" />
+          <h4>Free Delivery</h4>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <div class="single_feature_part">
+          <img src="/static/img/icon/feature_icon_4.svg" alt="#" />
+          <h4>Product with Gift</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- feature part end -->
+
+{% endblock content %}
